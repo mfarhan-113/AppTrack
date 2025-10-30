@@ -8,6 +8,7 @@ import { FileUpload } from '@/components/FileUpload';
 import { StatusHistory } from '@/components/StatusHistory';
 import { ReminderForm } from '@/components/ReminderForm';
 import { useApplication } from '@/lib/hooks/useApplications';
+import { useRouter } from 'next/navigation';
 import { formatDate, formatFileSize } from '@/lib/utils';
 import Link from 'next/link';
 import { Edit, Download, Trash2 } from 'lucide-react';
@@ -18,8 +19,23 @@ export default function ApplicationDetailPage({
 }: {
   params: { id: string };
 }) {
+  const router = useRouter();
   const queryClient = useQueryClient();
-  const { application, isLoading } = useApplication(params.id);
+  const { application, isLoading, deleteApplication, isDeleting } = useApplication(params.id);
+
+  const handleDelete = () => {
+    if (!application) return;
+    const confirmed = window.confirm(
+      `Delete application “${application.title}” at ${application.organization}?`
+    );
+    if (!confirmed) return;
+
+    deleteApplication(undefined, {
+      onSuccess: () => {
+        router.push('/applications');
+      },
+    });
+  };
 
   if (isLoading) {
     return (
@@ -47,12 +63,22 @@ export default function ApplicationDetailPage({
       <div className="container py-8">
         <div className="flex justify-between items-center mb-8">
           <h1 className="text-4xl font-bold">{application.title}</h1>
-          <Link href={`/applications/${params.id}/edit`}>
-            <Button>
-              <Edit className="mr-2 h-4 w-4" />
-              Edit
+          <div className="flex items-center gap-3">
+            <Button
+              variant="destructive"
+              onClick={handleDelete}
+              disabled={isDeleting}
+            >
+              <Trash2 className="mr-2 h-4 w-4" />
+              {isDeleting ? 'Deleting…' : 'Delete'}
             </Button>
-          </Link>
+            <Link href={`/applications/${params.id}/edit`}>
+              <Button>
+                <Edit className="mr-2 h-4 w-4" />
+                Edit
+              </Button>
+            </Link>
+          </div>
         </div>
 
         <div className="grid lg:grid-cols-3 gap-6">

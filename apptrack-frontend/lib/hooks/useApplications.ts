@@ -84,11 +84,21 @@ export const useApplication = (id: string) => {
     },
   });
 
+  const deleteMutation = useMutation({
+    mutationFn: () => api.delete(`/applications/${id}/`),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['applications'] });
+      queryClient.removeQueries({ queryKey: ['application', id] });
+    },
+  });
+
   return {
     application: data,
     isLoading,
     error,
     updateApplication: updateMutation.mutate,
     isUpdating: updateMutation.isPending,
+    deleteApplication: deleteMutation.mutate,
+    isDeleting: deleteMutation.isPending,
   };
 };
