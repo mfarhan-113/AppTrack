@@ -1,0 +1,26 @@
+[tool.black]
+line-length = 88
+target-version = ['py311']
+include = '\.pyi?$'
+extend-exclude = '''
+/(
+  migrations
+)/
+'''
+
+[tool.isort]
+profile = "black"
+line_length = 88
+skip = ["migrations"]
+known_django = ["django"]
+sections = ["FUTURE", "STDLIB", "DJANGO", "THIRDPARTY", "FIRSTPARTY", "LOCALFOLDER"]
+
+[tool.pytest.ini_options]
+DJANGO_SETTINGS_MODULE = "config.settings.development"
+python_files = ["test_*.py", "*_test.py"]
+addopts = "-v --tb=short --strict-markers"
+markers = [
+    "slow: marks tests as slow",
+    "unit: marks tests as unit tests",
+    "integration: marks tests as integration tests",
+]
