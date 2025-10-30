@@ -4,9 +4,9 @@ services:
     env: python
     plan: free
     region: frankfurt
-    rootDir: .
-    buildCommand: pip install -r apptrack-backend/requirements.txt
-    startCommand: python apptrack-backend/manage.py migrate --noinput && gunicorn apptrack-backend/config.wsgi:application
+    rootDir: apptrack-backend
+    buildCommand: pip install -r requirements.txt
+    startCommand: python manage.py migrate --noinput && gunicorn config.wsgi:application
     envVars:
       - key: DJANGO_SECRET_KEY
         generateValue: true
